@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Kiora Colectivo Filtros</title>
+    <title>Colectivo</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -16,65 +16,51 @@
         <p><strong>Fecha y Hora Actual: </strong><span id="fecha"></span> <span id="hora"></span></p>
     </div>
 
-    <div class="filter-container">
+    <div class="main-container">
+        <!-- Barra de Navegación -->
+        <nav class="navigation-bar">
+            <button class="nav-btn" data-route="florida-tucuman">FLORIDA → S. M. DE TUCUMÁN</button>
+            <button class="nav-btn" data-route="tucuman-florida">S. M. DE TUCUMÁN → FLORIDA</button>
+            <button class="nav-btn" data-route="posse-tucuman">W. POSSE → S. M. DE TUCUMÁN</button>
+            <button class="nav-btn" data-route="tucuman-posse">S. M. DE TUCUMÁN → W. POSSE</button>
+            <button class="nav-btn" id="btn-personalizado">Personalizado</button>
+        </nav>
 
-        <!-- Contenedor 1 -->
-        <div class="filter-box">
-            <h2>FLORIDA → S. M. DE TUCUMÁN</h2>
-            <label for="parada">Parada:</label>
-            <select id="parada">
-                <option value="todos">TODOS</option>
-                <option value="alderetes">ALDERETES</option>
-                <option value="banda">BANDA DEL RÍO SALÍ</option>
-                <option value="posse">W. POSSE</option>
-                <option value="alternativa">ALTERNATIVA</option>
-            </select>
-
-            <div class="trip-type">
-                <p>Tipo de viaje:</p>
-                <button class="btn-ida" id="ida-vuelta1" data-value="ida">Ida</button>
-                <button class="btn-vuelta" id="ida-vuelta1" data-value="vuelta">Vuelta</button>
-            </div>
+        <!-- Contenedor de Resultados (Tabla Inline) -->
+        <div id="results-container" class="results-container">
+            <!-- La tabla se inyectará aquí -->
         </div>
 
-        <!-- Contenedor 2 -->
-        <div class="filter-box">
-            <h2>W. POSSE → S. M. DE TUCUMÁN</h2>
+        <!-- Contenedor Filtro Personalizado (Oculto por defecto) -->
+        <div id="personalizado-container" class="filter-container hidden">
+            <div class="filter-box">
+                <h2>Filtro personalizado</h2>
 
-            <div class="trip-type">
-                <p>Tipo de viaje:</p>
-                <button class="btn-ida" id="ida-vuelta2" data-value="ida">Ida</button>
-                <button class="btn-vuelta" id="ida-vuelta2" data-value="vuelta">Vuelta</button>
+                <label for="origen">Origen:</label>
+                <select id="origen">
+                    <option value="">Seleccione origen</option>
+                    <option value="florida">FLORIDA</option>
+                    <option value="posse">W. POSSE</option>
+                    <option value="banda">BANDA DEL RÍO SALÍ</option>
+                </select>
+
+                <label for="destino">Destino:</label>
+                <select id="destino">
+                    <option value="">Seleccione destino</option>
+                    <option value="tucuman">S. M. DE TUCUMÁN</option>
+                    <option value="alderetes">ALDERETES</option>
+                </select>
+
+                <div class="trip-type">
+                    <p>Tipo de viaje:</p>
+                    <button class="btn-ida" id="ida-vuelta3" data-value="ida">Ida</button>
+                    <button class="btn-vuelta" id="ida-vuelta3" data-value="vuelta">Vuelta</button>
+                </div>
             </div>
         </div>
-
-        <!-- Contenedor 3 -->
-        <div class="filter-box">
-            <h2>Filtro personalizado</h2>
-
-            <label for="origen">Origen:</label>
-            <select id="origen">
-                <option value="">Seleccione origen</option>
-                <option value="florida">FLORIDA</option>
-                <option value="posse">W. POSSE</option>
-                <option value="banda">BANDA DEL RÍO SALÍ</option>
-            </select>
-
-            <label for="destino">Destino:</label>
-            <select id="destino">
-                <option value="">Seleccione destino</option>
-                <option value="tucuman">S. M. DE TUCUMÁN</option>
-                <option value="alderetes">ALDERETES</option>
-            </select>
-
-            <div class="trip-type">
-                <p>Tipo de viaje:</p>
-                <button class="btn-ida" id="ida-vuelta3" data-value="ida">Ida</button>
-                <button class="btn-vuelta" id="ida-vuelta3" data-value="vuelta">Vuelta</button>
-            </div>
-        </div>
-
     </div>
+
+
 
     <script src="js/app.js"></script>
 </body>
