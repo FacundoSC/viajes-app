@@ -54,7 +54,6 @@ function renderTable(data) {
         <table class="results-table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Inicio Recorrido</th>
                     <th>Recorrido</th>
                     <th>Costo Ticket</th>
@@ -69,7 +68,6 @@ function renderTable(data) {
 
     tableHtml += `
             <tr ${isNext}>
-                <td>${viaje.id || 'N/A'}</td>
                 <td>${viaje.horaSalida || 'N/A'}</td>
                 <td>${viaje.recorrido || 'N/A'}</td>
                 <td>$${viaje.costoTotal || 'N/A'}</td>
@@ -87,6 +85,11 @@ document.querySelectorAll('.nav-btn').forEach(button => {
   button.addEventListener('click', () => {
     // Ignorar botón personalizado
     if (button.id === 'btn-personalizado') return;
+
+    // Remover clase activa de todos los botones
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-route'));
+    // Agregar clase activa al botón presionado
+    button.classList.add('active-route');
 
     const route = button.dataset.route;
     const fecha = new Date();
