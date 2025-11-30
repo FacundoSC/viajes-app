@@ -106,7 +106,7 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 
       console.log(`Consultando API: ${origen} -> ${destino}, Hora: ${hora}, Día: ${tipoDia}`);
 
-      fetch(`ec2-98-80-144-211.compute-1.amazonaws.com:8080/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
+      fetch(`http://ec2-98-80-144-211.compute-1.amazonaws.com:8080/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
         .then(response => {
           if (!response.ok) throw new Error('Error en la respuesta de la API');
           return response.json();
