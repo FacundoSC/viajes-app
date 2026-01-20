@@ -106,7 +106,7 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 
       console.log(`Consultando API: ${origen} -> ${destino}, Hora: ${hora}, Día: ${tipoDia}`);
 
-      fetch(`http://localhost:9000/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
+      fetch(`http://151.145.56.250:9000/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
         .then(response => {
           if (!response.ok) throw new Error('Error en la respuesta de la API');
           return response.json();
