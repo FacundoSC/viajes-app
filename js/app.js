@@ -4,7 +4,7 @@ function actualizarFechaHora() {
 
   // Formateamos la fecha y hora
   const dia = fecha.toLocaleDateString('es-AR');
-  const hora = fecha.toLocaleTimeString('es-AR');
+  const hora = fecha.toLocaleTimeString('es-AR', { hour12: false });
 
   // Actualizamos el contenido en el HTML
   document.getElementById('fecha').textContent = dia;
@@ -94,7 +94,7 @@ document.querySelectorAll('.nav-btn').forEach(button => {
     const route = button.dataset.route;
     const fecha = new Date();
     const dia = fecha.toLocaleDateString('es-AR', { weekday: 'long' });
-    const hora = fecha.toLocaleTimeString('es-AR').substring(0, 5);
+    const hora = fecha.toLocaleTimeString('es-AR', { hour12: false }).substring(0, 5);
 
     if (route) {
       const origen = button.textContent.split('→')[0].trim();
@@ -106,7 +106,7 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 
       console.log(`Consultando API: ${origen} -> ${destino}, Hora: ${hora}, Día: ${tipoDia}`);
 
-      fetch(`http://ec2-98-80-144-211.compute-1.amazonaws.com:8080/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
+      fetch(`http://localhost:9000/api/viajes?origen=${origen}&destino=${destino}&hora_salida=${hora}&tipo_dia=${tipoDia}`)
         .then(response => {
           if (!response.ok) throw new Error('Error en la respuesta de la API');
           return response.json();
@@ -127,9 +127,11 @@ document.querySelectorAll('.nav-btn').forEach(button => {
 const btnPersonalizado = document.getElementById('btn-personalizado');
 const personalizadoContainer = document.getElementById('personalizado-container');
 
-btnPersonalizado.addEventListener('click', () => {
-  personalizadoContainer.classList.toggle('hidden');
-});
+if (btnPersonalizado && personalizadoContainer) {
+  btnPersonalizado.addEventListener('click', () => {
+    personalizadoContainer.classList.toggle('hidden');
+  });
+}
 
 // --- Lógica del Filtro Personalizado ---
 function toggleActiveButton(buttons, selectedButton) {
@@ -139,28 +141,80 @@ function toggleActiveButton(buttons, selectedButton) {
   selectedButton.classList.add('active');
 }
 
-document.querySelectorAll('.trip-type button').forEach(button => {
-  button.addEventListener('click', () => {
-    const buttons = button.parentElement.querySelectorAll('button');
-    toggleActiveButton(buttons, button);
+const tripTypeButtons = document.querySelectorAll('.trip-type button');
+if (tripTypeButtons.length > 0) {
+  tripTypeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const buttons = button.parentElement.querySelectorAll('button');
+      toggleActiveButton(buttons, button);
 
-    const origen = document.getElementById('origen').value;
-    const destino = document.getElementById('destino').value;
-    const tipoViaje = button.dataset.value;
-    const fecha = document.getElementById('fecha').textContent;
-    const hora = document.getElementById('hora').textContent;
+      const origen = document.getElementById('origen').value;
+      const destino = document.getElementById('destino').value;
+      const tipoViaje = button.dataset.value;
+      const fecha = document.getElementById('fecha').textContent;
+      const hora = document.getElementById('hora').textContent;
 
-    if (!origen || !destino) {
-      alert('Por favor seleccione origen y destino');
-      return;
-    }
+      if (!origen || !destino) {
+        alert('Por favor seleccione origen y destino');
+        return;
+      }
 
-    // Aquí también podríamos llamar a la API real si se desea, 
-    // por ahora mantenemos la simulación o reutilizamos la lógica si la API soporta estos filtros exactos.
-    // Para consistencia con el pedido del usuario, vamos a intentar usar la misma función de renderizado si fuera posible,
-    // pero como el usuario pidió específicamente para el navbar, dejaremos esto como estaba o lo adaptaremos mínimamente.
-
-    console.log('Filtro personalizado accionado');
-    // TODO: Implementar llamada a API para filtro personalizado si es necesario.
+      console.log('Filtro personalizado accionado');
+    });
   });
-});
+}
+
+
+// --- Lógica de Tarifario ---
+const btnTarifario = document.getElementById('btn-tarifario');
+
+const tarifasEstaticas = [
+  { codigo: '14', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '15', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '16', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '18', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '21', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '30', precio: 'Consultar', destino: 'N/A' },
+  { codigo: '34', precio: 'Consultar', destino: 'N/A' }
+];
+
+function renderTarifasTable(tarifas) {
+  resultsContainer.innerHTML = '';
+
+  let tableHtml = `
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Código Ticket</th>
+                    <th>Precio</th>
+                    <th>Destino</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+  tarifas.forEach(tarifa => {
+    tableHtml += `
+            <tr>
+                <td>${tarifa.codigo}</td>
+                <td>${tarifa.precio}</td>
+                <td>${tarifa.destino}</td>
+            </tr>
+        `;
+  });
+
+  tableHtml += '</tbody></table>';
+  resultsContainer.innerHTML = tableHtml;
+}
+
+if (btnTarifario) {
+  btnTarifario.addEventListener('click', () => {
+    // Remover clase activa de todos los botones de navegación
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-route'));
+    // Agregar clase activa al botón tarifario
+    btnTarifario.classList.add('active-route');
+
+    console.log('Mostrando tabla de tarifario');
+    renderTarifasTable(tarifasEstaticas);
+  });
+}
