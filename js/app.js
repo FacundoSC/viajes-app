@@ -74,10 +74,10 @@ function renderTable(data) {
 
     tableHtml += `
             <tr ${isNext}>
-                <td>${viaje.horaSalida || 'N/A'}</td>
-                <td>${viaje.recorrido || 'N/A'}</td>
-                <td>$${viaje.costoTotal || 'N/A'}</td>
-                <td>${viaje.codigoTicket || 'N/A'}</td>
+                <td data-label="Inicio">${viaje.horaSalida || 'N/A'}</td>
+                <td data-label="Recorrido">${viaje.recorrido || 'N/A'}</td>
+                <td data-label="Costo">$${viaje.costoTotal || 'N/A'}</td>
+                <td data-label="Ticket">${viaje.codigoTicket || 'N/A'}</td>
             </tr>
         `;
   });
@@ -204,9 +204,9 @@ function renderTarifasTable(tarifas) {
   tarifas.forEach(tarifa => {
     tableHtml += `
             <tr>
-                <td>${tarifa.codigo || 'N/A'}</td>
-                <td>$${tarifa.monto || 'N/A'}</td>
-                <td>${tarifa.origen || 'N/A'}</td>
+                <td data-label="Código">${tarifa.codigo || 'N/A'}</td>
+                <td data-label="Precio">$${tarifa.monto || 'N/A'}</td>
+                <td data-label="Origen">${tarifa.origen || 'N/A'}</td>
             </tr>
         `;
   });

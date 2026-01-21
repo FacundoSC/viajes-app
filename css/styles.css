@@ -253,3 +253,88 @@ button.active {
 .footer-links a:hover {
     color: #3b82f6;
 }
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .navigation-bar {
+        gap: 10px;
+    }
+
+    .nav-btn {
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+
+    .results-container {
+        border-radius: 8px;
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Transform Table to Cards on Mobile */
+    .results-table thead {
+        display: none;
+        /* Hide headers */
+    }
+
+    .results-table,
+    .results-table tbody,
+    .results-table tr,
+    .results-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .results-table tr {
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 10px;
+        position: relative;
+    }
+
+    .results-table tr:last-child {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+
+    .results-table td {
+        text-align: right;
+        padding: 10px 15px;
+        border-bottom: 1px solid #f1f5f9;
+        position: relative;
+    }
+
+    .results-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Add Labels using Data Attributes or Sequence */
+    .results-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        text-align: left;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+
+    /* Specific highlights for the "next departure" card */
+    .next-departure {
+        border-left: none;
+        border-top: 4px solid #28a745;
+        background-color: #f0fff4 !important;
+    }
+}
