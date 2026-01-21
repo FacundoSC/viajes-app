@@ -324,12 +324,19 @@ button.active {
 
     .results-table td {
         padding: 10px 12px;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
+        /* Smaller font for all data columns on mobile */
         border-bottom: 1px solid #f1f5f9;
         display: flex;
         justify-content: space-between;
         align-items: center;
         text-align: right;
+    }
+
+    /* Smaller font for schedules on mobile */
+    .results-table td[data-label="Inicio"] {
+        font-size: 0.8rem;
+        font-weight: 500;
     }
 
     .results-table td:last-child {
