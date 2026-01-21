@@ -168,18 +168,16 @@ if (tripTypeButtons.length > 0) {
 // --- Lógica de Tarifario ---
 const btnTarifario = document.getElementById('btn-tarifario');
 
-const tarifasEstaticas = [
-  { codigo: '14', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '15', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '16', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '18', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '21', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '30', precio: 'Consultar', destino: 'N/A' },
-  { codigo: '34', precio: 'Consultar', destino: 'N/A' }
-];
+// La lista de tarifas estáticas se ha eliminado para usar el endpoint /api/tarifas
+
 
 function renderTarifasTable(tarifas) {
   resultsContainer.innerHTML = '';
+
+  if (!Array.isArray(tarifas) || tarifas.length === 0) {
+    resultsContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No hay tarifas disponibles.</p>';
+    return;
+  }
 
   let tableHtml = `
         <table class="results-table">
@@ -187,7 +185,7 @@ function renderTarifasTable(tarifas) {
                 <tr>
                     <th>Código Ticket</th>
                     <th>Precio</th>
-                    <th>Destino</th>
+                    <th>Destino (Ejemplo)</th>
                 </tr>
             </thead>
             <tbody>
@@ -196,9 +194,9 @@ function renderTarifasTable(tarifas) {
   tarifas.forEach(tarifa => {
     tableHtml += `
             <tr>
-                <td>${tarifa.codigo}</td>
-                <td>${tarifa.precio}</td>
-                <td>${tarifa.destino}</td>
+                <td>${tarifa.codigo || 'N/A'}</td>
+                <td>$${tarifa.precio || 'N/A'}</td>
+                <td>${tarifa.origen || 'N/A'}</td>
             </tr>
         `;
   });
@@ -215,6 +213,19 @@ if (btnTarifario) {
     btnTarifario.classList.add('active-route');
 
     console.log('Mostrando tabla de tarifario');
-    renderTarifasTable(tarifasEstaticas);
+
+    fetch('/api/tarifas')
+      .then(response => {
+        if (!response.ok) throw new Error('Error en la respuesta de la API de tarifas');
+        return response.json();
+      })
+      .then(data => {
+        console.log('Tarifas recibidas:', data);
+        renderTarifasTable(data);
+      })
+      .catch(error => {
+        console.error('Error al consultar API de tarifas:', error);
+        resultsContainer.innerHTML = '<p style="text-align:center; padding: 20px; color: red;">Error al cargar las tarifas. Asegúrese de que el servidor esté corriendo.</p>';
+      });
   });
 }
