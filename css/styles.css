@@ -333,21 +333,31 @@ button.active {
         text-align: right;
     }
 
-    /* Smaller font for schedules on mobile */
-    .results-table td[data-label="Inicio"] {
-        font-size: 0.8rem;
-        font-weight: 500;
+    /* Centered layout for short data points */
+    .results-table td[data-label="Inicio"],
+    .results-table td[data-label="Costo"],
+    .results-table td[data-label="Ticket"],
+    .results-table td[data-label="Código"],
+    .results-table td[data-label="Precio"] {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 2px;
     }
 
-    .results-table td:last-child {
-        border-bottom: none;
+    /* Remove right margin when centered */
+    .results-table td[data-label="Inicio"]::before,
+    .results-table td[data-label="Costo"]::before,
+    .results-table td[data-label="Ticket"]::before,
+    .results-table td[data-label="Código"]::before,
+    .results-table td[data-label="Precio"]::before {
+        margin-right: 0;
     }
 
-    /* Add Labels using Data Attributes or Sequence */
+    /* Add Labels using Data Attributes */
     .results-table td::before {
         content: attr(data-label);
         position: static;
-        /* Switch from absolute to static for flexbox layout */
         width: auto;
         font-weight: 700;
         text-transform: uppercase;
