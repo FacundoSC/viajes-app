@@ -195,7 +195,7 @@ function renderTarifasTable(tarifas) {
     tableHtml += `
             <tr>
                 <td>${tarifa.codigo || 'N/A'}</td>
-                <td>$${tarifa.precio || 'N/A'}</td>
+                <td>$${tarifa.monto || 'N/A'}</td>
                 <td>${tarifa.origen || 'N/A'}</td>
             </tr>
         `;
