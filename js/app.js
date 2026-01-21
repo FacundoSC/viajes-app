@@ -1,4 +1,6 @@
-// Función para mostrar la fecha y hora en tiempo real
+/**
+ * Actualiza la visualización de fecha y hora en tiempo real.
+ */
 function actualizarFechaHora() {
   const fecha = new Date();
 
@@ -11,12 +13,16 @@ function actualizarFechaHora() {
   document.getElementById('hora').textContent = hora;
 }
 
-// Llamamos a la función para que actualice la fecha y hora cada segundo
+// Inicialización de actualización periódica
 setInterval(actualizarFechaHora, 1000);
 
 // --- Lógica de Renderizado de Tabla ---
 const resultsContainer = document.getElementById('results-container');
 
+/**
+ * Renderiza la tabla de viajes próximos.
+ * @param {Array} data - Lista de objetos de viaje.
+ */
 function renderTable(data) {
   resultsContainer.innerHTML = ''; // Limpiar resultados anteriores
 
@@ -171,6 +177,10 @@ const btnTarifario = document.getElementById('btn-tarifario');
 // La lista de tarifas estáticas se ha eliminado para usar el endpoint /api/tarifas
 
 
+/**
+ * Renderiza la tabla de tarifario basada en los datos de la API.
+ * @param {Array} tarifas - Lista de tarifas obtenidas del servidor.
+ */
 function renderTarifasTable(tarifas) {
   resultsContainer.innerHTML = '';
 

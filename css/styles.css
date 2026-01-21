@@ -1,15 +1,18 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 20px;
-    background: #f4f7f6;
-    color: #333;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
 }
 
 h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #2c3e50;
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: -0.025em;
 }
 
 #fecha-hora {
@@ -216,4 +219,37 @@ button.active {
 .next-departure td {
     color: #155724;
     font-weight: 600;
+}
+
+/* Footer Styles */
+.minimal-footer {
+    margin-top: 60px;
+    padding: 40px 20px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.footer-content strong {
+    color: #1e293b;
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-links a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #3b82f6;
 }
