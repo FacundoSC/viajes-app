@@ -196,6 +196,7 @@ function renderTarifasTable(tarifas) {
                     <th>Código Ticket</th>
                     <th>Precio</th>
                     <th>Destino (Ejemplo)</th>
+                    <th>Histórico</th>
                 </tr>
             </thead>
             <tbody>
@@ -206,13 +207,136 @@ function renderTarifasTable(tarifas) {
             <tr>
                 <td data-label="Código">${tarifa.codigo || 'N/A'}</td>
                 <td data-label="Precio">$${tarifa.monto || 'N/A'}</td>
-                <td data-label="Origen">${tarifa.origen || 'N/A'}</td>
+                <td data-label="Description">${tarifa.description || 'N/A'}</td>
+                <td data-label="Histórico">
+                    <button class="btn-history" onclick="showHistory(${tarifa.codigo})">Ver Historial</button>
+                </td>
             </tr>
         `;
   });
 
   tableHtml += '</tbody></table>';
   resultsContainer.innerHTML = tableHtml;
+}
+
+/**
+ * Obtiene el historial de una tarifa y muestra el modal con el histograma.
+ * @param {number} id - ID de la tarifa.
+ */
+function showHistory(id) {
+  const modal = document.getElementById('history-modal');
+  const container = document.getElementById('histogram-container');
+  const closeBtn = document.querySelector('.close-modal');
+
+  // Mostrar modal con cargando
+  modal.classList.remove('hidden');
+  container.innerHTML = '<p style="text-align:center; width: 100%;">Cargando historial...</p>';
+
+  // Configurar cierre de modal
+  closeBtn.onclick = () => modal.classList.add('hidden');
+  window.onclick = (event) => {
+    if (event.target == modal) modal.classList.add('hidden');
+  };
+
+  fetch(`/api/tarifas/${id}/history`)
+    .then(response => {
+      if (!response.ok) throw new Error('Error al obtener el historial');
+      return response.json();
+    })
+    .then(data => {
+      renderHistoryChart(data);
+    })
+    .catch(error => {
+      console.error(error);
+      container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Error al cargar el historial.</p>';
+    });
+}
+
+/**
+ * Renderiza un gráfico de líneas minimalista usando SVG.
+ * @param {Array} historyData - Lista de objetos con fecha y precio.
+ */
+function renderHistoryChart(historyData) {
+  const container = document.getElementById('histogram-container');
+  container.innerHTML = '';
+
+  if (!Array.isArray(historyData) || historyData.length === 0) {
+    container.innerHTML = '<p style="text-align:center; width: 100%;">No hay datos históricos disponibles.</p>';
+    return;
+  }
+
+  const width = container.clientWidth - 60; // Padding
+  const height = container.clientHeight - 120; // Padding para etiquetas
+  const maxPrice = Math.max(...historyData.map(d => d.cost || 0));
+  const minPrice = Math.min(...historyData.map(d => d.cost || 0));
+  const range = maxPrice - minPrice || 1;
+
+  // Crear SVG
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "chart-svg");
+  svg.setAttribute("viewBox", `0 0 ${container.clientWidth} ${container.clientHeight}`);
+
+  const drawHeight = height;
+  const drawWidth = width;
+  const xStep = historyData.length > 1 ? drawWidth / (historyData.length - 1) : 0;
+
+  // Función para calcular Y basado en el precio
+  const getY = (price) => {
+    // Escalar precio al área de dibujo (invertido porque Y crece hacia abajo)
+    const normalized = (price - minPrice) / (maxPrice - minPrice || 1);
+    return drawHeight - (normalized * drawHeight * 0.8) + 40; // 0.8 para dejar margen arriba/abajo
+  };
+
+  let points = "";
+
+  historyData.forEach((item, i) => {
+    const x = i * xStep + 40;
+    const y = getY(item.cost || 0);
+    points += `${x},${y} `;
+
+    // Dibujar Punto
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", 5);
+    circle.setAttribute("class", "chart-point");
+    svg.appendChild(circle);
+
+    // Etiqueta de Precio
+    const labelValue = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    labelValue.setAttribute("x", x);
+    labelValue.setAttribute("y", y - 15);
+    labelValue.setAttribute("class", "chart-label-value");
+    labelValue.textContent = `$${item.cost || 0}`;
+    svg.appendChild(labelValue);
+
+    // Etiqueta de Fecha
+    const from = item.vigenciaDesde ? new Date(item.vigenciaDesde).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+
+    // Si vigenciaHasta es null o "1970-01-01", mostrar "Hoy"
+    let to = 'Hoy';
+    if (item.vigenciaHasta && !item.vigenciaHasta.startsWith('1970-01-01')) {
+      to = new Date(item.vigenciaHasta).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    const dateRange = from ? `${from} - ${to}` : 'N/A';
+
+    const labelDate = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    labelDate.setAttribute("x", x);
+    labelDate.setAttribute("y", drawHeight + 80);
+    labelDate.setAttribute("class", "chart-label-date");
+    labelDate.setAttribute("transform", `rotate(-45, ${x}, ${drawHeight + 80})`);
+    labelDate.textContent = dateRange;
+    svg.appendChild(labelDate);
+  });
+
+  // Dibujar Línea
+  const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  polyline.setAttribute("points", points.trim());
+  polyline.setAttribute("class", "chart-line");
+  svg.insertBefore(polyline, svg.firstChild);
+
+  container.appendChild(svg);
 }
 
 if (btnTarifario) {

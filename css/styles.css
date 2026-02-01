@@ -373,9 +373,135 @@ button.active {
     /* Specific highlights for the "next departure" card */
     .next-departure {
         border: 2px solid #28a745 !important;
+        border: 2px solid #28a745 !important;
         background-color: #f0fff4 !important;
         transform: scale(1.02);
         z-index: 10;
         margin: 15px 0;
     }
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+.close-modal {
+    font-size: 28px;
+    font-weight: bold;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: #1e293b;
+}
+
+/* Chart Styles (Line Chart) */
+.histogram-container {
+    height: 350px;
+    padding: 40px 20px 80px 40px;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+    background: #fff;
+}
+
+.chart-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.chart-line {
+    fill: none;
+    stroke: #3b82f6;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 4px 6px rgba(59, 130, 246, 0.2));
+}
+
+.chart-point {
+    fill: #fff;
+    stroke: #3b82f6;
+    stroke-width: 2.5;
+    cursor: pointer;
+    transition: r 0.2s, fill 0.2s;
+}
+
+.chart-point:hover {
+    r: 7;
+    fill: #3b82f6;
+}
+
+.chart-label-value {
+    font-size: 0.75rem;
+    font-weight: 700;
+    fill: #1e293b;
+    text-anchor: middle;
+}
+
+.chart-label-date {
+    font-size: 0.65rem;
+    fill: #64748b;
+    text-anchor: end;
+}
+
+.chart-grid-line {
+    stroke: #f1f5f9;
+    stroke-width: 1;
+}
+
+.btn-history {
+    padding: 8px 16px;
+    background-color: #64748b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-history:hover {
+    background-color: #334155;
+    transform: translateY(-1px);
 }
