@@ -30,19 +30,31 @@ module.exports = async (req, res) => {
       });
     }
 
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: form.getHeaders(),
-      body: form.getBuffer()
-    });
-
-    const result = await response.json();
-    return res.status(response.status).json(result);
+    const { status, body } = await submitForm(form);
+    return res.status(status).json(body);
   } catch (error) {
     console.error('Contact form error:', error);
     return res.status(500).json({ success: false, message: 'Error al enviar el mensaje' });
   }
 };
+
+function submitForm(form) {
+  return new Promise((resolve, reject) => {
+    form.submit('https://api.web3forms.com/submit', (err, response) => {
+      if (err) return reject(err);
+      let data = '';
+      response.on('data', (chunk) => (data += chunk));
+      response.on('end', () => {
+        try {
+          resolve({ status: response.statusCode, body: JSON.parse(data) });
+        } catch (e) {
+          reject(new Error('Invalid JSON response from Web3Forms: ' + data.substring(0, 200)));
+        }
+      });
+      response.on('error', reject);
+    });
+  });
+}
 
 function parseMultipart(req) {
   return new Promise((resolve, reject) => {
