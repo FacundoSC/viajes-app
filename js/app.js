@@ -469,7 +469,14 @@ if (contactForm) {
         body: formData
       });
 
-      const result = await response.json();
+      let result;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Respuesta inesperada (${response.status}): ${text.substring(0, 150)}`);
+      }
 
       if (result.success) {
         contactStatus.className = 'contact-status success';
@@ -480,12 +487,12 @@ if (contactForm) {
         renderFileList();
         setTimeout(() => closeContactForm(), 3000);
       } else {
-        throw new Error(result.message || 'Error al enviar el formulario');
+        throw new Error(result.message || result.detail || 'Error al enviar el formulario');
       }
     } catch (error) {
       console.error('Error al enviar formulario:', error);
       contactStatus.className = 'contact-status error';
-      contactStatus.textContent = 'Error al enviar el mensaje. Por favor, intenta nuevamente.';
+      contactStatus.textContent = error.message || 'Error al enviar el mensaje. Por favor, intenta nuevamente.';
       contactStatus.classList.remove('hidden');
     } finally {
       btnEnviar.disabled = false;

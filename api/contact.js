@@ -1,14 +1,17 @@
 const Busboy = require('busboy');
 const FormData = require('form-data');
+const https = require('https');
 
 module.exports = async (req, res) => {
+  res.setHeader('X-Powered-By', 'viajes-app-contact');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
 
   const accessKey = process.env.EMAIL_KEY_HERE;
   if (!accessKey) {
-    return res.status(500).json({ success: false, message: 'Servicio de email no configurado' });
+    return res.status(500).json({ success: false, message: 'Servicio de email no configurado. Falta EMAIL_KEY_HERE.' });
   }
 
   try {
@@ -34,25 +37,40 @@ module.exports = async (req, res) => {
     return res.status(status).json(body);
   } catch (error) {
     console.error('Contact form error:', error);
-    return res.status(500).json({ success: false, message: 'Error al enviar el mensaje' });
+    return res.status(500).json({
+      success: false,
+      message: 'Error al enviar el mensaje',
+      detail: error.message
+    });
   }
 };
 
 function submitForm(form) {
   return new Promise((resolve, reject) => {
-    form.submit('https://api.web3forms.com/submit', (err, response) => {
-      if (err) return reject(err);
+    const options = {
+      method: 'POST',
+      hostname: 'api.web3forms.com',
+      path: '/submit',
+      headers: form.getHeaders()
+    };
+
+    const request = https.request(options, (response) => {
       let data = '';
       response.on('data', (chunk) => (data += chunk));
       response.on('end', () => {
+        console.log('Web3Forms response status:', response.statusCode);
+        console.log('Web3Forms response body:', data.substring(0, 500));
         try {
           resolve({ status: response.statusCode, body: JSON.parse(data) });
         } catch (e) {
-          reject(new Error('Invalid JSON response from Web3Forms: ' + data.substring(0, 200)));
+          reject(new Error(`Web3Forms returned status ${response.statusCode}: ${data.substring(0, 300)}`));
         }
       });
       response.on('error', reject);
     });
+
+    request.on('error', reject);
+    form.pipe(request);
   });
 }
 
