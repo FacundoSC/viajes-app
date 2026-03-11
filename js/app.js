@@ -464,7 +464,7 @@ if (contactForm) {
     });
 
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         body: formData
       });
