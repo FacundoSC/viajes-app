@@ -339,6 +339,161 @@ function renderHistoryChart(historyData) {
   container.appendChild(svg);
 }
 
+// --- Lógica de Contacto ---
+const btnContacto = document.getElementById('btn-contacto');
+const contactModal = document.getElementById('contact-modal');
+const contactForm = document.getElementById('contact-form');
+const closeContactModal = document.querySelector('.close-contact-modal');
+const btnCancelarContacto = document.getElementById('btn-cancelar-contacto');
+const contactStatus = document.getElementById('contact-status');
+const fileInput = document.getElementById('contact-adjuntos');
+const fileList = document.getElementById('file-list');
+const fileDropZone = document.getElementById('file-drop-zone');
+const contactAsunto = document.getElementById('contact-asunto');
+const hiddenSubject = document.getElementById('hidden-subject');
+
+let selectedFiles = [];
+
+function openContactModal() {
+  contactModal.classList.remove('hidden');
+  contactStatus.classList.add('hidden');
+  contactStatus.className = 'contact-status hidden';
+}
+
+function closeContactForm() {
+  contactModal.classList.add('hidden');
+  contactForm.reset();
+  selectedFiles = [];
+  renderFileList();
+  contactStatus.classList.add('hidden');
+}
+
+if (btnContacto) {
+  btnContacto.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-route'));
+    btnContacto.classList.add('active-route');
+    openContactModal();
+  });
+}
+
+if (closeContactModal) {
+  closeContactModal.addEventListener('click', closeContactForm);
+}
+
+if (btnCancelarContacto) {
+  btnCancelarContacto.addEventListener('click', closeContactForm);
+}
+
+if (contactModal) {
+  contactModal.addEventListener('click', (e) => {
+    if (e.target === contactModal) closeContactForm();
+  });
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function renderFileList() {
+  if (!fileList) return;
+  fileList.innerHTML = '';
+  selectedFiles.forEach((file, index) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `
+      <span class="file-item-name">${file.name}</span>
+      <span class="file-item-size">${formatFileSize(file.size)}</span>
+      <button type="button" class="file-item-remove" data-index="${index}">&times;</button>
+    `;
+    fileList.appendChild(item);
+  });
+}
+
+if (fileInput) {
+  fileInput.addEventListener('change', () => {
+    const newFiles = Array.from(fileInput.files);
+    selectedFiles = [...selectedFiles, ...newFiles];
+    fileInput.value = '';
+    renderFileList();
+  });
+}
+
+if (fileList) {
+  fileList.addEventListener('click', (e) => {
+    if (e.target.classList.contains('file-item-remove')) {
+      const index = parseInt(e.target.dataset.index);
+      selectedFiles.splice(index, 1);
+      renderFileList();
+    }
+  });
+}
+
+if (fileDropZone) {
+  fileDropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    fileDropZone.classList.add('drag-over');
+  });
+  fileDropZone.addEventListener('dragleave', () => {
+    fileDropZone.classList.remove('drag-over');
+  });
+  fileDropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileDropZone.classList.remove('drag-over');
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    selectedFiles = [...selectedFiles, ...droppedFiles];
+    renderFileList();
+  });
+}
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btnEnviar = document.getElementById('btn-enviar');
+    btnEnviar.disabled = true;
+    btnEnviar.innerHTML = '<span class="spinner"></span> Enviando...';
+    contactStatus.classList.add('hidden');
+
+    hiddenSubject.value = contactAsunto.value;
+
+    const formData = new FormData(contactForm);
+    formData.delete('attachment');
+    selectedFiles.forEach(file => {
+      formData.append('attachment', file);
+    });
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        contactStatus.className = 'contact-status success';
+        contactStatus.textContent = 'Mensaje enviado correctamente. ¡Gracias por contactarnos!';
+        contactStatus.classList.remove('hidden');
+        contactForm.reset();
+        selectedFiles = [];
+        renderFileList();
+        setTimeout(() => closeContactForm(), 3000);
+      } else {
+        throw new Error(result.message || 'Error al enviar el formulario');
+      }
+    } catch (error) {
+      console.error('Error al enviar formulario:', error);
+      contactStatus.className = 'contact-status error';
+      contactStatus.textContent = 'Error al enviar el mensaje. Por favor, intenta nuevamente.';
+      contactStatus.classList.remove('hidden');
+    } finally {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Enviar';
+    }
+  });
+}
+
 if (btnTarifario) {
   btnTarifario.addEventListener('click', () => {
     // Remover clase activa de todos los botones de navegación

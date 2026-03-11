@@ -28,8 +28,7 @@
             <button class="nav-btn" data-route="posse-tucuman">W. POSSE → S. M. DE TUCUMÁN</button>
             <button class="nav-btn" data-route="tucuman-posse">S. M. DE TUCUMÁN → W. POSSE</button>
             <button class="nav-btn" id="btn-tarifario">TARIFARIO</button>
-            <button class="nav-btn" id="btn-contacto"
-                onclick="window.location.href='mailto:cordobafs.dev@gmail.com?subject=Sugerencia%20Viajes-App'">CONTACTO</button>
+            <button class="nav-btn" id="btn-contacto">CONTACTO</button>
         </nav>
 
         <!-- Contenedor de Resultados (Tabla Inline) -->
@@ -78,6 +77,58 @@
             <div id="histogram-container" class="histogram-container">
                 <!-- El histograma se dibujará aquí -->
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Formulario de Contacto -->
+    <div id="contact-modal" class="modal hidden">
+        <div class="modal-content contact-modal-content">
+            <div class="modal-header">
+                <h2>Contacto</h2>
+                <span class="close-contact-modal">&times;</span>
+            </div>
+            <form id="contact-form" enctype="multipart/form-data">
+                <input type="hidden" name="access_key" value="EMAIL_KEY_HERE">
+                <input type="hidden" name="from_name" value="Viajes App - Contacto">
+                <input type="hidden" name="subject" id="hidden-subject" value="">
+
+                <div class="form-group">
+                    <label for="contact-nombre">Nombre</label>
+                    <input type="text" id="contact-nombre" name="name" placeholder="Tu nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact-email">Email</label>
+                    <input type="email" id="contact-email" name="email" placeholder="tu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact-asunto">Asunto</label>
+                    <input type="text" id="contact-asunto" name="asunto" placeholder="Asunto del mensaje" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact-mensaje">Mensaje</label>
+                    <textarea id="contact-mensaje" name="message" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact-adjuntos">Adjuntar archivos (imágenes, documentos, etc.)</label>
+                    <div class="file-upload-area" id="file-drop-zone">
+                        <input type="file" id="contact-adjuntos" name="attachment" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
+                        <p class="file-upload-text">Arrastra archivos aquí o haz clic para seleccionar</p>
+                        <p class="file-upload-hint">Máx. 5MB por archivo</p>
+                    </div>
+                    <div id="file-list" class="file-list"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-enviar" id="btn-enviar">Enviar</button>
+                    <button type="button" class="btn-cancelar" id="btn-cancelar-contacto">Cancelar</button>
+                </div>
+
+                <div id="contact-status" class="contact-status hidden"></div>
+            </form>
         </div>
     </div>
 
