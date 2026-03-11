@@ -455,28 +455,28 @@ if (contactForm) {
     btnEnviar.innerHTML = '<span class="spinner"></span> Enviando...';
     contactStatus.classList.add('hidden');
 
-    hiddenSubject.value = contactAsunto.value;
-
-    const formData = new FormData(contactForm);
-    formData.delete('attachment');
-    selectedFiles.forEach(file => {
-      formData.append('attachment', file);
-    });
-
     try {
-      const response = await fetch('/api/contact', {
+      const keyResponse = await fetch('/api/contact');
+      const keyData = await keyResponse.json();
+      if (!keyData.success || !keyData.key) {
+        throw new Error(keyData.message || 'No se pudo obtener la configuración del servicio de email.');
+      }
+
+      hiddenSubject.value = contactAsunto.value;
+
+      const formData = new FormData(contactForm);
+      formData.append('access_key', keyData.key);
+      formData.delete('attachment');
+      selectedFiles.forEach(file => {
+        formData.append('attachment', file);
+      });
+
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
       });
 
-      let result;
-      const contentType = response.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        result = await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Respuesta inesperada (${response.status}): ${text.substring(0, 150)}`);
-      }
+      const result = await response.json();
 
       if (result.success) {
         contactStatus.className = 'contact-status success';
@@ -487,7 +487,7 @@ if (contactForm) {
         renderFileList();
         setTimeout(() => closeContactForm(), 3000);
       } else {
-        throw new Error(result.message || result.detail || 'Error al enviar el formulario');
+        throw new Error(result.message || 'Error al enviar el formulario');
       }
     } catch (error) {
       console.error('Error al enviar formulario:', error);
